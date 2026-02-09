@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TO DO LIST</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <style>
+        body{
+            background: linear-gradient(to right, rgb(149, 32, 51), rgb(29, 29, 112));
+        }
+        .done{
+            text-decoration: line-through;
+            color: gray;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow p-4 w-100" style="max-width:500px;">
+        <h2 class="text-center mb-4">TO DO LIST</h2>
+
+        <!-- Input -->
+        <div class="input-group mb-3">
+            <input type="text" id="taskInput" class="form-control" placeholder="Enter a task">
+            <button class="btn btn-primary" onclick="addTask()">Add</button>
+        </div>
+
+        <!-- Task list -->
+        <ul class="list-group" id="taskList"></ul>
+    </div>
+</div>
+
+<script>
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+    function displayTasks(){
+        let list = document.getElementById("taskList");
+        list.innerHTML = "";
+
+        tasks.forEach((task, index) => {
+            list.innerHTML += `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span class="${task.done ? 'done' : ''}" 
+                          onclick="toggleTask(${index})"
+                          style="cursor:pointer;">
+                        ${task.text}
+                    </span>
+                    <button class="btn btn-sm btn-danger" onclick="deleteTask(${index})">
+                        Delete
+                    </button>
+                </li>
+            `;
+        });
+    }
+
+    function addTask(){
+        let input = document.getElementById("taskInput");
+        let text = input.value.trim();
+
+        if(text === ""){
+            alert("Please enter a task");
+            return;
+        }
+
+        tasks.push({ text: text, done: false });
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+        input.value = "";
+        displayTasks();
+    }
+
+    function deleteTask(index){
+        tasks.splice(index, 1);
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+        displayTasks();
+    }
+
+    function toggleTask(index){
+        tasks[index].done = !tasks[index].done;
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+        displayTasks();
+    }
+
+    displayTasks();
+</script>
+</body>
+</html>
